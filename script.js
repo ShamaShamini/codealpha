@@ -1,29 +1,41 @@
-const products = [
-    { id: 1, name: "Product 1", price: 10 },
-    { id: 2, name: "Product 2", price: 20 },
-    { id: 3, name: "Product 3", price: 30 },
+const posts = [
+    { id: 1, user: "User1", content: "This is my first post!", likes: 0, comments: [] },
+    { id: 2, user: "User2", content: "Hello world!", likes: 0, comments: [] },
 ];
 
-let cart = [];
-
-function renderProducts() {
-    const productList = document.getElementById('product-list');
-    products.forEach(product => {
-        const productDiv = document.createElement('div');
-        productDiv.classList.add('product');
-        productDiv.innerHTML = `
-            <h2>${product.name}</h2>
-            <p>Price: $${product.price}</p>
-            <button onclick="addToCart(${product.id})">Add to Cart</button>
+function renderPosts() {
+    const postList = document.getElementById('post-list');
+    postList.innerHTML = '';
+    posts.forEach(post => {
+        const postDiv = document.createElement('div');
+        postDiv.classList.add('post');
+        postDiv.innerHTML = `
+            <h3>${post.user}</h3>
+            <p>${post.content}</p>
+            <button onclick="likePost(${post.id})">Like (${post.likes})</button>
+            <input type="text" placeholder="Add a comment" id="comment-${post.id}">
+            <button onclick="addComment(${post.id})">Comment</button>
+            <div id="comments-${post.id}"></div>
         `;
-        productList.appendChild(productDiv);
+        postList.appendChild(postDiv);
     });
 }
 
-function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    cart.push(product);
-    document.getElementById('cart').innerText = `Cart (${cart.length})`;
+function likePost(postId) {
+    const post = posts.find(p => p.id === postId);
+    post.likes += 1;
+    renderPosts();
 }
 
-window.onload = renderProducts;
+function addComment(postId) {
+    const commentInput = document.getElementById(`comment-${postId}`);
+    const commentText = commentInput.value;
+    if (commentText) {
+        const post = posts.find(p => p.id === postId);
+        post.comments.push(commentText);
+        commentInput.value = '';
+        renderPosts();
+    }
+}
+
+window.onload = renderPosts;
